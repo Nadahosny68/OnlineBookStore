@@ -80,8 +80,7 @@ class Library:
         st.subheader("Library Books:")
         if self.books:
             for book in self.books:
-                status = "Available" if book.available else "Borrowed"
-                st.write(f"- {book.title} by {book.author} [{status}]")
+                book.display_info() # Using the display_info method
         else:
             st.info("The library has no books.")
 
@@ -89,7 +88,7 @@ class Library:
         st.subheader("Registered Users:")
         if self.users:
             for user in self.users:
-                st.write(f"- {user.name} (Borrowed: {', '.join(user.borrowed_books) or 'None'})")
+                user.display_user_info() # Using the display_user_info method
         else:
             st.info("No users are registered.")
 
@@ -116,10 +115,20 @@ class Book:
         self.author = author
         self.available = available
 
+    def display_info(self):
+        """Display book details with formatting."""
+        status = "✅ Available" if self.available else "❌ Borrowed"
+        st.write(f"{self.title:<30} | {self.author:<20} | {status}")
+
 class User:
     def __init__(self, name, borrowed_books=None):
         self.name = name
         self.borrowed_books = borrowed_books if borrowed_books else []
+
+    def display_user_info(self):
+        """Display user details with borrowed books."""
+        borrowed = ", ".join(self.borrowed_books) if self.borrowed_books else "None"
+        st.write(f"{self.name:<20} | Borrowed Books: {borrowed}")
 
 library_app = Library("City Library")
 
