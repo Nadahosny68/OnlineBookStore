@@ -8,6 +8,27 @@ class Library:
         self.books = []
         self.users = []
         self.load_data()
+        if not self.books and not self.users:
+            self._load_initial_data() # Load initial data if none exists
+
+    def _load_initial_data(self):
+        initial_books = [
+            {"title": "The Hitchhiker's Guide to the Galaxy", "author": "Douglas Adams", "available": True},
+            {"title": "Pride and Prejudice", "author": "Jane Austen", "available": True},
+            {"title": "1984", "author": "George Orwell", "available": False},
+            {"title": "To Kill a Mockingbird", "author": "Harper Lee", "available": True},
+        ]
+        initial_users = [
+            {"name": "Alice", "borrowed_books": []},
+            {"name": "Bob", "borrowed_books": ["1984"]},
+            {"name": "Charlie", "borrowed_books": []},
+        ]
+        for book_data in initial_books:
+            self.books.append(Book(**book_data))
+        for user_data in initial_users:
+            self.users.append(User(**user_data))
+        self.save_data()
+        st.info("Initial sample data loaded.")
 
     def add_book(self, book):
         if not isinstance(book, Book):
@@ -62,8 +83,7 @@ class Library:
         if found_books:
             st.subheader("Found Books:")
             for book in found_books:
-                status = "Available" if book.available else "Borrowed"
-                st.write(f"- {book.title} by {book.author} [{status}]")
+                book.display_info()
         else:
             st.info("No books found.")
 
@@ -72,7 +92,7 @@ class Library:
         if found_users:
             st.subheader("Matching Users:")
             for user in found_users:
-                st.write(f"- {user.name} (Borrowed: {', '.join(user.borrowed_books) or 'None'})")
+                user.display_user_info()
         else:
             st.info("No users found.")
 
@@ -80,7 +100,7 @@ class Library:
         st.subheader("Library Books:")
         if self.books:
             for book in self.books:
-                book.display_info() # Using the display_info method
+                book.display_info()
         else:
             st.info("The library has no books.")
 
@@ -88,7 +108,7 @@ class Library:
         st.subheader("Registered Users:")
         if self.users:
             for user in self.users:
-                user.display_user_info() # Using the display_user_info method
+                user.display_user_info()
         else:
             st.info("No users are registered.")
 
@@ -108,6 +128,10 @@ class Library:
                 self.users = [User(u["name"], u["borrowed_books"]) for u in data["users"]]
         except FileNotFoundError:
             pass
+        except json.JSONDecodeError:
+            st.error("Error decoding library_data.json. Starting with an empty library.")
+            self.books = []
+            self.users = []
 
 class Book:
     def __init__(self, title, author, available=True):
