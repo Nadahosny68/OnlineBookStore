@@ -4,6 +4,35 @@ import json
 
 ADMIN_PASSWORD = "admin123"
 
+class Book:
+    def __init__(self, title, author, available=True, genre=None):
+        self.title = title
+        self.author = author
+        self.available = available
+        self.genre = genre
+
+    def display_info(self, show_details_button=False):
+        status = "✅ Available" if self.available else "❌ Borrowed"
+        st.write(f"{self.title:<30} | {self.author:<20} | {status} | Genre: {self.genre or 'N/A'}")
+        if show_details_button:
+            with st.expander(f"Details for '{self.title}'"):
+                st.write(f"**Author:** {self.author}")
+                st.write(f"**Genre:** {self.genre or 'N/A'}")
+                st.write(f"**Status:** {status}")
+                if not self.available and st.session_state.get("current_user") and self.title not in [res["book_title"] for res in library_app.reservations if res["user_name"] == st.session_state["current_user"]]:
+                    if st.button(f"Reserve '{self.title}'", key=f"reserve_{self.title}"):
+                        library_app.reserve_book(st.session_state["current_user"], self.title)
+                        st.rerun() # Refresh to update UI
+
+class User:
+    def __init__(self, name, borrowed_books=None):
+        self.name = name
+        self.borrowed_books = borrowed_books if borrowed_books else []
+
+    def display_user_info(self):
+        borrowed = ", ".join(self.borrowed_books) if self.borrowed_books else "None"
+        st.write(f"{self.name:<20} | Borrowed Books: {borrowed}")
+
 class Library:
     def __init__(self, name):
         self.name = name
@@ -182,36 +211,7 @@ class Library:
             self.users = []
             self.reservations = []
 
-class Book:
-    def __init__(self, title, author, available=True, genre=None):
-        self.title = title
-        self.author = author
-        self.available = available
-        self.genre = genre
-
-    def display_info(self, show_details_button=False):
-        status = "✅ Available" if self.available else "❌ Borrowed"
-        st.write(f"{self.title:<30} | {self.author:<20} | {status} | Genre: {self.genre or 'N/A'}")
-        if show_details_button:
-            with st.expander(f"Details for '{self.title}'"):
-                st.write(f"**Author:** {self.author}")
-                st.write(f"**Genre:** {self.genre or 'N/A'}")
-                st.write(f"**Status:** {status}")
-                if not self.available:
-                    borrow_options = [user.name for user in library_app.users if self.title not in user.borrowed_books]
-                    if borrow_options and st.session_state.get("current_user") and self.title not in [res["book_title"] for res in library_app.reservations if res["user_name"] == st.session_state["current_user"]]:
-                        if st.button(f"Reserve '{self.title}'", key=f"reserve_{self.title}"):
-                            library_app.reserve_book(st.session_state["current_user"], self.title)
-                            st.rerun() # Refresh to update UI
-
-class User:
-    def __init__(self, name, borrowed_books=None):
-        self.name = name
-        self.borrowed_books = borrowed_books if borrowed_books else []
-
-    def display_user_info(self):
-        borrowed = ", ".join(self.borrowed_books) if self.borrowed_books else "None"
-        st.write(f"{self.name:<20} | Borrowed Books: {borrowed}")
+library_app = Library("City Library")
 
 st.title("📚 My Awesome Library")
 
