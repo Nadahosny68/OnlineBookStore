@@ -1,5 +1,7 @@
 # My Awesome Library App
 
+## App Link: https://onlinebookstore.streamlit.app/ 
+
 This is a Streamlit web application for managing a simple library system. Users can browse available books, register, borrow, return, search for books and users, and even reserve books that are currently unavailable. Administrators have a separate login to potentially manage the system (though more admin features can be added).
 
 ## Features
@@ -16,25 +18,6 @@ This is a Streamlit web application for managing a simple library system. Users 
 * **User Profiles:** Users can select their name to see the books they have currently borrowed and their reservations.
 * **Admin Login:** A simple password-protected admin login in the sidebar. (More admin features can be implemented).
 
-## How to Run the App Locally
-
-1.  **Make sure you have Python installed.** You can download it from [https://www.python.org/downloads/](https://www.python.org/downloads/).
-
-2.  **Install the required libraries.** Open your terminal or command prompt and run:
-    ```bash
-    pip install streamlit
-    ```
-
-3.  **Save the Python code.** Save the provided Python script (e.g., `OnlineBookStore.py`) to a directory on your computer.
-
-4.  **Navigate to the directory.** In your terminal or command prompt, navigate to the directory where you saved the Python file.
-
-5.  **Run the Streamlit app.** Execute the following command:
-    ```bash
-    streamlit run OnlineBookStore.py
-    ```
-
-    This will automatically open the application in your web browser.
 
 ## How to Use the App
 
